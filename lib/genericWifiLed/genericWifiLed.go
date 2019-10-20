@@ -15,16 +15,17 @@ const SOCKET_ON = 0x23
 const SOCKET_OFF = 0x24
 
 type WifiLedController struct {
-	ipAddress string
-	port      int
+	ipAddress  string
+	port       int
 	connection *net.Conn
 }
 
-func NewWifiLedController(_ipAddress string, portIfNotDefault int) (output WifiLedController) {
+func NewController(_ipAddress string, portIfNotDefault string) (output WifiLedController) {
 	output.ipAddress = _ipAddress
-	if portIfNotDefault > 0 {
-		output.port = portIfNotDefault
-	}else{
+	port, _ := strconv.Atoi(portIfNotDefault)
+	if port > 0 {
+		output.port = port
+	} else {
 		output.port = 5577
 	}
 	return
@@ -34,9 +35,25 @@ func (w *WifiLedController) DimTo(red int, green int, blue int, warmWhite int, c
 	payload := generateDimCommand(red, green, blue, warmWhite, coolwhite)
 	w.dialAndSend(payload)
 }
+func (w *WifiLedController) On() {
+	payload := generateOnCommand()
+	w.dialAndSend(payload)
+}
+func (w *WifiLedController) Off() {
+	payload := generateOffCommand()
+	w.dialAndSend(payload)
+}
 
-func generateDimCommand(red int, green int, blue int, warmWhite int, coolwhite int) []byte {
-	payload := []byte { COMMANDGROUP_SETCOLOR, byte(red), byte(green), byte(blue), byte(warmWhite), byte(coolwhite), SOCKET_TRUE, SOCKET_FALSE }
+func generateOnCommand() []byte {
+	payload := []byte{COMMANDGROUP_SETPOWER, SOCKET_ON, SOCKET_FALSE}
+	return addChecksum(payload)
+}
+func generateOffCommand() []byte {
+	payload := []byte{COMMANDGROUP_SETPOWER, SOCKET_OFF, SOCKET_FALSE}
+	return addChecksum(payload)
+}
+func generateDimCommand(red int, green int, blue int, warmWhite int, coolWhite int) []byte {
+	payload := []byte{COMMANDGROUP_SETCOLOR, byte(red), byte(green), byte(blue), byte(warmWhite), byte(coolWhite), SOCKET_TRUE, SOCKET_FALSE}
 	return addChecksum(payload)
 }
 
@@ -49,7 +66,7 @@ func addChecksum(input []byte) []byte {
 }
 
 func (w *WifiLedController) dialAndSend(payload []byte) (err error) {
-	connection, err := net.Dial("tcp", w.ipAddress + ":" + strconv.Itoa(w.port))
+	connection, err := net.Dial("tcp", w.ipAddress+":"+strconv.Itoa(w.port))
 	if err != nil {
 		fmt.Println(err)
 		return

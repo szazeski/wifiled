@@ -5,16 +5,21 @@ import (
 	"testing"
 )
 
-const TEST_UNIT_IP = "192.168.1.137"
+const TEST_UNIT_IP = "192.168.1.120"
 
 func Test_genericWifiLed_DimTo_offB(t *testing.T) {
-	wifiController := NewWifiLedController(TEST_UNIT_IP, 0)
+	wifiController := NewController(TEST_UNIT_IP, "")
 	wifiController.DimTo(0,0,0,0,0)
 }
 
 func Test_genericWifiLed_DimTo_fullRGB(t *testing.T) {
-	wifiController := NewWifiLedController(TEST_UNIT_IP, 0)
+	wifiController := NewController(TEST_UNIT_IP, "")
 	wifiController.DimTo(255,255,255,0,0)
+}
+
+func Test_genericWifiLed_DimTo_AboveRangeRed(t *testing.T) {
+	wifiController := NewController(TEST_UNIT_IP, "")
+	wifiController.DimTo(600,0,0,0,0)
 }
 
 func Test_genericWifiLed_generateChecksum_blank(t *testing.T) {
