@@ -7,6 +7,7 @@ import (
 	"wifiled/lib/toolbox"
 )
 
+const VERSION = "0.1"
 const ENV_IP_KEY = "wifiled_ip"
 const ENV_PORT_KEY = "wifiled_port"
 
@@ -50,7 +51,6 @@ func main() {
 	}
 	port := os.Getenv(ENV_PORT_KEY)
 
-	//TODO decide how to set ip and port -- maybe an .env file
 	controller := genericWifiLed.NewController(ip, port)
 	if command == "on" {
 		controller.On()
@@ -80,9 +80,11 @@ func displayHelpText(errorText string) {
 	if errorText != "" {
 		fmt.Println(errorText)
 	}
-	fmt.Println("wifiled is a program to send commands to generic wifi led controllers on the network")
+	fmt.Println("wifiled v" + VERSION)
+	fmt.Println("sends commands to generic wifi led controllers on the network")
+	fmt.Println("set environment vars wifiled_ip and wifiled_port")
 	fmt.Println("wifiled on -- send on command")
 	fmt.Println("wifiled off -- send off command")
 	fmt.Println("wifiled dim <RED> <GREEN> <BLUE> -- set RGB values")
-	fmt.Println("wifiled setup <ip> <port> -- set environment vars wifiled_ip and wifiled_port")
+
 }
