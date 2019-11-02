@@ -22,12 +22,7 @@ type WifiLedController struct {
 
 func NewController(_ipAddress string, portIfNotDefault string) (output WifiLedController) {
 	output.ipAddress = _ipAddress
-	port, _ := strconv.Atoi(portIfNotDefault)
-	if port > 0 {
-		output.port = port
-	} else {
-		output.port = 5577
-	}
+	output.port, _ = strconv.Atoi(portIfNotDefault)
 	return
 }
 
