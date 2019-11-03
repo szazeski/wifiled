@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 	"wifiled/lib/genericWifiLed"
 	"wifiled/lib/toolbox"
 )
@@ -17,11 +18,21 @@ const RGBW_DEFAULT = RGBW_MIN
 
 func main() {
 	commandLineArguments := os.Args
-	commandLineArgumentsLength := len(commandLineArguments)
+	commandLineArgumentsLength := 0
+	for _, value := range commandLineArguments {
+		if strings.HasPrefix(value, "-") {
+			break
+		}
+		commandLineArgumentsLength++
+	}
+	commandLineArguments = commandLineArguments[0:commandLineArgumentsLength]
 	command := ""
 	if commandLineArgumentsLength >= 2 {
 		command = commandLineArguments[1]
 	}
+
+	fmt.Println(commandLineArguments)
+
 	commandFlagIp := ""
 	flag.StringVar(&commandFlagIp, "ip", "", "set the ip address of the LED Controller")
 	commandFlagPort := ""
@@ -95,11 +106,11 @@ func displayHelpText(errorText string) {
 		fmt.Println(errorText)
 	}
 	fmt.Println("wifiled v" + VERSION)
-	fmt.Println("sends commands to generic wifi led controllers on the network")
-	fmt.Println("set environment vars wifiled_ip and wifiled_port")
-	fmt.Println("wifiled on -- send on command")
-	fmt.Println("wifiled off -- send off command")
-	fmt.Println("wifiled dim <BRIGHTNESS> -- set all channels to value out of 255")
-	fmt.Println("wifiled dim <RED> <GREEN> <BLUE> -- set RGB values out of 255")
-	fmt.Println("wifiled dim <RED> <GREEN> <BLUE> <WARMWHITE> <COOLWHITE> -- set RGBW values out of 255")
+	fmt.Println(" sends commands to generic wifi led controllers on the network")
+	fmt.Println(" set environment vars wifiled_ip and wifiled_port")
+	fmt.Println("  wifiled on -- send on command")
+	fmt.Println("  wifiled off -- send off command")
+	fmt.Println("  wifiled dim <BRIGHTNESS> -- set all channels to value out of 255")
+	fmt.Println("  wifiled dim <RED> <GREEN> <BLUE> -- set RGB values out of 255")
+	fmt.Println("  wifiled dim <RED> <GREEN> <BLUE> <WARMWHITE> <COOLWHITE> -- set RGBW values out of 255")
 }
