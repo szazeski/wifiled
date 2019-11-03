@@ -31,8 +31,6 @@ func main() {
 		command = commandLineArguments[1]
 	}
 
-	fmt.Println(commandLineArguments)
-
 	commandFlagIp := ""
 	flag.StringVar(&commandFlagIp, "ip", "", "set the ip address of the LED Controller")
 	commandFlagPort := ""
