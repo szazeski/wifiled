@@ -6,19 +6,21 @@ import (
 )
 
 const TEST_UNIT_IP = "192.168.1.120" // set this to your local device to test against
+const TEST_UNIT_PORT = "5577"
 
 func Test_genericWifiLed_DimTo_offB(t *testing.T) {
-	wifiController := NewController(TEST_UNIT_IP, "")
+	wifiController := NewController(TEST_UNIT_IP, TEST_UNIT_PORT)
 	wifiController.DimTo(0, 0, 0, 0, 0)
+	t.Log("The rgb strip should now be off")
 }
 
 func Test_genericWifiLed_DimTo_fullRGB(t *testing.T) {
-	wifiController := NewController(TEST_UNIT_IP, "")
+	wifiController := NewController(TEST_UNIT_IP, TEST_UNIT_PORT)
 	wifiController.DimTo(255, 255, 255, 0, 0)
 }
 
 func Test_genericWifiLed_DimTo_AboveRangeRed(t *testing.T) {
-	wifiController := NewController(TEST_UNIT_IP, "")
+	wifiController := NewController(TEST_UNIT_IP, TEST_UNIT_PORT)
 	wifiController.DimTo(600, 0, 0, 0, 0)
 }
 
@@ -35,10 +37,35 @@ func Test_genericWifiLed_generateChecksum_blue7percent(t *testing.T) {
 	actual := addChecksum(input)
 
 	if len(expected) != len(actual) {
-		t.Error("invalid")
+		t.Error("invalid byte length")
 	}
 
 	fmt.Println("ACTUAL  : ", actual)
 	fmt.Println("EXPECTED: ", expected)
 
+}
+
+func Test_genericWifiLed_multipleIp(t *testing.T) {
+	firstIp := "192.168.1.2"
+	secondIp := "192.168.1.3"
+	input := firstIp + "," + secondIp
+	wifiController := NewController(input, "")
+
+	checkArray(t, wifiController.ipAddresses, []string{firstIp, secondIp})
+}
+
+func checkArray(t *testing.T, actual []string, expected []string) {
+	if len(actual) != len(expected) {
+		t.Error("Expected to have", len(expected), "rows but got", len(actual))
+	}
+
+	for i := range actual {
+		checkString(t, actual[i], expected[i])
+	}
+}
+
+func checkString(t *testing.T, actual string, expected string) {
+	if actual != expected {
+		t.Error("EXPECTED : ", expected, "\nACTUAL   :", actual)
+	}
 }

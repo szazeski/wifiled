@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net"
 	"strconv"
+	"strings"
 )
 
 const COMMANDGROUP_SETCOLOR = 0x31
@@ -15,13 +16,13 @@ const SOCKET_ON = 0x23
 const SOCKET_OFF = 0x24
 
 type WifiLedController struct {
-	ipAddress  string
-	port       int
-	connection *net.Conn
+	ipAddresses []string
+	port        int
+	connection  *net.Conn
 }
 
 func NewController(_ipAddress string, portIfNotDefault string) (output WifiLedController) {
-	output.ipAddress = _ipAddress
+	output.ipAddresses = strings.Split(_ipAddress, ",")
 	output.port, _ = strconv.Atoi(portIfNotDefault)
 	return
 }
@@ -61,17 +62,22 @@ func addChecksum(input []byte) []byte {
 }
 
 func (w *WifiLedController) dialAndSend(payload []byte) (err error) {
-	connection, err := net.Dial("tcp", w.ipAddress+":"+strconv.Itoa(w.port))
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer connection.Close()
+	for _, ip := range w.ipAddresses {
+		connection, err := net.Dial("tcp", ip+":"+strconv.Itoa(w.port))
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
 
-	_, err = connection.Write(payload)
-	if err != nil {
-		fmt.Println(err)
-		return
+		_, err = connection.Write(payload)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		err = connection.Close()
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
 	return
 }

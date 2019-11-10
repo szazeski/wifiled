@@ -2,9 +2,12 @@
 Command line access to generic socket based WIFI LED Controllers
 
 ## Usage
-This version expects to connect to a single LED Controller that is set by environment variables.
+Before using `wifiled`, you need to tell it what ip and port to target.
 
-On linux run `export wifiled_ip= 192.168.1.123` and `export wifiled_port = 5577` (port will default to 5577 if not set)
+1. **Environment Variables** - Before using wifiled, run `export wifiled_ip= 192.168.1.123` and `export wifiled_port = 5577`
+2. **CLI Flags** - at the end of commands add `-ip 192.168.1.123` and/or `-port 5577`
+
+(port will default to 5577 if not set)
 
 Then you can issue the following commands:
 
@@ -16,6 +19,8 @@ Then you can issue the following commands:
 
 `wifiled dim 255 0 0` - dims LEDs to Red 255/255 Green 0/255 Blue 0/255
 
+`wifiled dim 200 200 200 100 100` - dims LEDs RGB to 200/255 and Whites to 100/200
+
 ## To Build
 Run `go build` in the root of the directory. 
 
@@ -25,16 +30,16 @@ Tested with generic WIFI LED Controllers that use the MagicHome mobile app to co
  - [MagicHome iOS App](https://apps.apple.com/us/app/magic-home-pro/id1187808229)
 
 Devices:
- - XCSOURCE DC 12-24V WIFI Remote 5 Channels Controller for iOS Android RGB LED Strip LD686
+- XCSOURCE DC 12-24V WIFI Remote 5 Channels Controller for iOS Android RGB LED Strip LD686
     - MPN : HF-LPB100-1
- - LEDENET Smart Wifi LED Controlelr 5 Channels Control 4A4CH
- - (more to come)
+- LEDENET Smart Wifi LED Controller 5 Channels Control 4A4CH
+- (more to come)
 
 2014 Protocol - Sends tcp packets to port 5577
 
 
-## Other Awesome Projects
-Tasmota Firmware : https://github.com/arendst/Tasmota/wiki/MagicHome-LED-strip-controller
-ESPurna Firmware : https://github.com/xoseperez/espurna/wiki/Hardware-Magic-Home-LED-Controller
-Magichome-python : https://github.com/adamkempenich/magichome-python
-node-magichome : https://github.com/jangxx/node-magichome
+## Other Awesome WIFI LED Projects
+- Tasmota Firmware : https://github.com/arendst/Tasmota/wiki/MagicHome-LED-strip-controller
+- ESPurna Firmware : https://github.com/xoseperez/espurna/wiki/Hardware-Magic-Home-LED-Controller
+- Magichome-python : https://github.com/adamkempenich/magichome-python
+- node-magichome : https://github.com/jangxx/node-magichome
