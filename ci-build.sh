@@ -5,7 +5,7 @@ package="wifiled"
 package_split=(${package//\// })
 package_name=${package_split[-1]}
 
-platforms=("windows/amd64" "windows/386" "darwin/amd64", "linux/amd64", "linux/386", "linux/arm64", "linux/arm")
+platforms=("windows/amd64" "windows/386" "darwin/amd64" "linux/amd64" "linux/386" "linux/arm64" "linux/arm")
 
 for platform in "${platforms[@]}"
 do
