@@ -21,8 +21,12 @@ Then you can issue the following commands:
 
 `wifiled dim 200 200 200 100 100` - dims LEDs RGB to 200/255 and Whites to 100/200
 
+## To Develop
+This project expects to be checked out in your go src path.
+
+
 ## To Build
-Run `go build` in the root of the directory. 
+Run `go build` in the root of the project. 
 
 ## Testing
 Tested with generic WIFI LED Controllers that use the MagicHome mobile app to control.

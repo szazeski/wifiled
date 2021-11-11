@@ -29,15 +29,15 @@ func NewController(_ipAddress string, portIfNotDefault string) (output WifiLedCo
 
 func (w *WifiLedController) DimTo(red int, green int, blue int, warmWhite int, coolwhite int) {
 	payload := generateDimCommand(red, green, blue, warmWhite, coolwhite)
-	w.dialAndSend(payload)
+	w.dialAndSendThenClose(payload)
 }
 func (w *WifiLedController) On() {
 	payload := generateOnCommand()
-	w.dialAndSend(payload)
+	w.dialAndSendThenClose(payload)
 }
 func (w *WifiLedController) Off() {
 	payload := generateOffCommand()
-	w.dialAndSend(payload)
+	w.dialAndSendThenClose(payload)
 }
 
 func generateOnCommand() []byte {
@@ -61,7 +61,7 @@ func addChecksum(input []byte) []byte {
 	return append(input, checksum)
 }
 
-func (w *WifiLedController) dialAndSend(payload []byte) (err error) {
+func (w *WifiLedController) dialAndSendThenClose(payload []byte) (err error) {
 	for _, ip := range w.ipAddresses {
 		connection, err := net.Dial("tcp", ip+":"+strconv.Itoa(w.port))
 		if err != nil {

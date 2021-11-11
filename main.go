@@ -9,7 +9,7 @@ import (
 	"wifiled/lib/toolbox"
 )
 
-const VERSION = "0.2"
+const VERSION = "0.3"
 const ENV_IP_KEY = "wifiled_ip"
 const ENV_PORT_KEY = "wifiled_port"
 const RGBW_MAX = 255
@@ -47,7 +47,7 @@ func main() {
 		if commandFlagIp != "" {
 			ip = commandFlagIp
 		} else {
-			displayHelpText("Missing ip environment variable, check your env")
+			fmt.Println("Missing ip environment variable, check your env or use -ip=x.x.x.x")
 			return
 		}
 	}
