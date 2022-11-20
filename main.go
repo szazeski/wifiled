@@ -11,7 +11,7 @@ import (
 	"wifiled/lib/toolbox"
 )
 
-const VERSION = "0.4"
+const VERSION = "0.3"
 const BUILD_DATE = "2022-Nov-20"
 const ENV_IP_KEY = "wifiled_ip"
 const ENV_PORT_KEY = "wifiled_port"
