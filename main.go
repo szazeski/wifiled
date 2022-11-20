@@ -3,13 +3,15 @@ package main
 import (
 	"flag"
 	"fmt"
+	"math/rand"
 	"os"
 	"strings"
 	"wifiled/lib/genericWifiLed"
 	"wifiled/lib/toolbox"
 )
 
-const VERSION = "0.3"
+const VERSION = "0.4"
+const BUILD_DATE = "2022-Nov-20"
 const ENV_IP_KEY = "wifiled_ip"
 const ENV_PORT_KEY = "wifiled_port"
 const RGBW_MAX = 255
@@ -47,7 +49,7 @@ func main() {
 		if commandFlagIp != "" {
 			ip = commandFlagIp
 		} else {
-			fmt.Println("Missing ip environment variable, check your env or use -ip=x.x.x.x")
+			fmt.Printf("Missing IP - add environment with export %s=x.x.x.x or use -ip=x.x.x.x\n", ENV_IP_KEY)
 			return
 		}
 	}
@@ -59,7 +61,7 @@ func main() {
 			port = "5577"
 		}
 	}
-	fmt.Printf("LED: %s:%s", ip, port)
+	fmt.Printf("LED: %s:%s\n", ip, port)
 
 	controller := genericWifiLed.NewController(ip, port)
 	if command == "on" {
@@ -73,42 +75,86 @@ func main() {
 		// wifiled dim 255 255 255 255 255
 		// 0       1   2   3   4   5   6
 		if commandLineArgumentsLength == 3 {
-			v := toolbox.ConvertStringToBoundedInt(commandLineArguments[2], RGBW_MAX, RGBW_MIN, RGBW_DEFAULT)
+			// wifiled dim 10
+			v := StringToInt(commandLineArguments[2])
 			controller.DimTo(v, v, v, v, v)
 		} else if commandLineArgumentsLength == 5 {
-			redValue, greenValue, blueValue := getRgbFromCommandLine(commandLineArguments, RGBW_MAX, RGBW_MIN, RGBW_DEFAULT)
+			// wifiled dim 255 0 200
+			redValue, greenValue, blueValue := getRgbFrom(commandLineArguments)
 			controller.DimTo(redValue, greenValue, blueValue, 0, 0)
 		} else if commandLineArgumentsLength >= 7 {
-			redValue, greenValue, blueValue := getRgbFromCommandLine(commandLineArguments, RGBW_MAX, RGBW_MIN, RGBW_DEFAULT)
-			warmWhiteValue := toolbox.ConvertStringToBoundedInt(commandLineArguments[5], RGBW_MAX, RGBW_MIN, RGBW_DEFAULT)
-			coolWhiteValue := toolbox.ConvertStringToBoundedInt(commandLineArguments[6], RGBW_MAX, RGBW_MIN, RGBW_DEFAULT)
+			// wifiled dim 10 20 30 40 50
+			redValue, greenValue, blueValue, warmWhiteValue, coolWhiteValue := getRgbwwFrom(commandLineArguments)
 			controller.DimTo(redValue, greenValue, blueValue, warmWhiteValue, coolWhiteValue)
 		} else {
 			displayHelpText("invalid dim parameters")
 		}
+	} else if command == "randomize" {
+		// wifiled randomize
+		// wifiled randomize 0-255
+		// wifiled randomize 0-255 255 10-50
+		newRed, newBlue, newGreen := 0, 0, 0
+		if commandLineArgumentsLength == 3 {
+			newRed, newBlue, newGreen = randomizeRGBSingle(commandLineArguments[2])
+		} else if commandLineArgumentsLength == 5 {
+			newRed, newBlue, newGreen = randomizeRGB(commandLineArguments[2], commandLineArguments[3], commandLineArguments[4])
+		} else {
+			newRed, newBlue, newGreen = randomizeRGBSingle("255")
+		}
+
+		fmt.Printf(" Picking Random Color - R%dG%dB%d\n", newRed, newGreen, newBlue)
+		controller.DimTo(newRed, newBlue, newGreen, 0, 0)
 
 	} else {
 		displayHelpText("unknown command")
 	}
 }
 
-func getRgbFromCommandLine(commandLineArguments []string, MAX_VALUE int, MIN_VALUE int, DEFAULT_VALUE int) (redValue int, greenValue int, blueValue int) {
-	redValue = toolbox.ConvertStringToBoundedInt(commandLineArguments[2], MAX_VALUE, MIN_VALUE, DEFAULT_VALUE)
-	greenValue = toolbox.ConvertStringToBoundedInt(commandLineArguments[3], MAX_VALUE, MIN_VALUE, DEFAULT_VALUE)
-	blueValue = toolbox.ConvertStringToBoundedInt(commandLineArguments[4], MAX_VALUE, MIN_VALUE, DEFAULT_VALUE)
+func randomizeRGBSingle(input string) (int, int, int) {
+	return randomizeRGB(input, input, input)
+}
+
+func randomizeRGB(red string, green string, blue string) (newRed int, newBlue int, newGreen int) {
+	offset, lowerBound := toolbox.ParseRangeFromString(red, RGBW_MIN, RGBW_MAX)
+	newRed = rand.Intn(offset) + lowerBound
+	offset, lowerBound = toolbox.ParseRangeFromString(green, RGBW_MIN, RGBW_MAX)
+	newBlue = rand.Intn(offset) + lowerBound
+	offset, lowerBound = toolbox.ParseRangeFromString(blue, RGBW_MIN, RGBW_MAX)
+	newGreen = rand.Intn(offset) + lowerBound
 	return
+}
+
+func getRgbFrom(commandLineArguments []string) (redValue int, greenValue int, blueValue int) {
+	redValue = StringToInt(commandLineArguments[2])
+	greenValue = StringToInt(commandLineArguments[3])
+	blueValue = StringToInt(commandLineArguments[4])
+	return
+}
+func getRgbwwFrom(commandLineArguments []string) (redValue int, greenValue int, blueValue int, coolWhiteValue int, warmWhiteValue int) {
+	redValue = StringToInt(commandLineArguments[2])
+	greenValue = StringToInt(commandLineArguments[3])
+	blueValue = StringToInt(commandLineArguments[4])
+	coolWhiteValue = StringToInt(commandLineArguments[5])
+	warmWhiteValue = StringToInt(commandLineArguments[6])
+	return
+}
+
+func StringToInt(input string) int {
+	return toolbox.ConvertStringToBoundedInt(input, RGBW_MAX, RGBW_MIN, RGBW_DEFAULT)
 }
 
 func displayHelpText(errorText string) {
 	if errorText != "" {
 		fmt.Println(errorText)
 	}
-	fmt.Println("wifiled v" + VERSION)
+	fmt.Printf("wifiled v%s (%s)", VERSION, BUILD_DATE)
 	fmt.Println(" sends commands to generic wifi led controllers on the network")
-	fmt.Println(" set environment vars wifiled_ip and wifiled_port")
 	fmt.Println("  wifiled on -- send on command")
 	fmt.Println("  wifiled off -- send off command")
 	fmt.Println("  wifiled dim <BRIGHTNESS> -- set all channels to value out of 255")
 	fmt.Println("  wifiled dim <RED> <GREEN> <BLUE> -- set RGB values out of 255")
 	fmt.Println("  wifiled dim <RED> <GREEN> <BLUE> <WARMWHITE> <COOLWHITE> -- set RGBW values out of 255")
+	fmt.Println("  wifiled randomize -- sets a random color")
+	fmt.Println("  wifiled randomize 0-10 -- sets a random color with values between 0 and 10")
+	fmt.Println("  wifiled randomize 255 0-50 0-50 -- sets red fixed and green/blue between 0 and 50")
 }
