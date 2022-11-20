@@ -27,31 +27,36 @@ func Test_toolbox_ConvertStringToBoundedInt_floor(t *testing.T) {
 }
 
 func Test_toolbox_ParseRangeFromString(t *testing.T) {
-	TryParseRangeFromString(t, "", 0, 255)
-	TryParseRangeFromString(t, "10-50", 10, 40)
-	TryParseRangeFromString(t, "123", 0, 123)
+	TryParseRangeFromString(t, "", 0, 255, false)
+	TryParseRangeFromString(t, "10-50", 10, 40, true)
+	TryParseRangeFromString(t, "123", 0, 123, false)
+	TryParseRangeFromString(t, "0", 0, 0, false)
 }
 
-func TryParseRangeFromString(t *testing.T, input string, expectedLowerBound int, expectedOffset int) {
-	actualOffset, actualLowerBound := ParseRangeFromString(input, 0, 255)
+func TryParseRangeFromString(t *testing.T, input string, expectedLowerBound int, expectedOffset int, expectedRange bool) {
+	actualOffset, actualLowerBound, actualFound := ParseRangeFromString(input, 0, 255)
 
 	if actualOffset != expectedOffset {
 		t.Errorf("'%s' expected Offest to get %d but got %d", input, expectedOffset, actualOffset)
 	}
 	if actualLowerBound != expectedLowerBound {
-		t.Errorf("'%s' expected LowerBound to get %d but got %d", input, expectedLowerBound, expectedLowerBound)
+		t.Errorf("'%s' expected LowerBound to get %d but got %d", input, expectedLowerBound, actualLowerBound)
+	}
+
+	if actualFound != expectedRange {
+		t.Errorf("'%s' expected range to get %v but got %v", input, expectedRange, actualFound)
+
 	}
 }
 
 func Test_toolbox_ParseRangeFromString_to_RandomizeRgb(t *testing.T) {
 
 	for i := 0; i < 100; i++ {
-		offset, lowerBound := ParseRangeFromString("20-50", 0, 255)
+		offset, lowerBound, _ := ParseRangeFromString("20-50", 0, 255)
 		actual := rand.Intn(offset) + lowerBound
 
 		if actual < 20 && actual > 50 {
 			t.Error("out of expected range 20-50 but got", actual)
 		}
 	}
-
 }

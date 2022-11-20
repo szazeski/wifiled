@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"os"
 	"strings"
+	"time"
 	"wifiled/lib/genericWifiLed"
 	"wifiled/lib/toolbox"
 )
@@ -93,17 +94,17 @@ func main() {
 		// wifiled randomize
 		// wifiled randomize 0-255
 		// wifiled randomize 0-255 255 10-50
-		newRed, newBlue, newGreen := 0, 0, 0
+		newRed, newGreen, newBlue := 0, 0, 0
 		if commandLineArgumentsLength == 3 {
-			newRed, newBlue, newGreen = randomizeRGBSingle(commandLineArguments[2])
+			newRed, newGreen, newBlue = randomizeRGBSingle(commandLineArguments[2])
 		} else if commandLineArgumentsLength == 5 {
-			newRed, newBlue, newGreen = randomizeRGB(commandLineArguments[2], commandLineArguments[3], commandLineArguments[4])
+			newRed, newGreen, newBlue = randomizeRGB(commandLineArguments[2], commandLineArguments[3], commandLineArguments[4])
 		} else {
-			newRed, newBlue, newGreen = randomizeRGBSingle("255")
+			newRed, newGreen, newBlue = randomizeRGBSingle("0-255")
 		}
 
-		fmt.Printf(" Picking Random Color - R%dG%dB%d\n", newRed, newGreen, newBlue)
-		controller.DimTo(newRed, newBlue, newGreen, 0, 0)
+		fmt.Printf(" Picking Random Color - R%d G%d B%d (#%02X%02X%02X)\n", newRed, newGreen, newBlue, newRed, newGreen, newBlue)
+		controller.DimTo(newRed, newGreen, newBlue, 0, 0)
 
 	} else {
 		displayHelpText("unknown command")
@@ -115,12 +116,25 @@ func randomizeRGBSingle(input string) (int, int, int) {
 }
 
 func randomizeRGB(red string, green string, blue string) (newRed int, newBlue int, newGreen int) {
-	offset, lowerBound := toolbox.ParseRangeFromString(red, RGBW_MIN, RGBW_MAX)
-	newRed = rand.Intn(offset) + lowerBound
-	offset, lowerBound = toolbox.ParseRangeFromString(green, RGBW_MIN, RGBW_MAX)
-	newBlue = rand.Intn(offset) + lowerBound
-	offset, lowerBound = toolbox.ParseRangeFromString(blue, RGBW_MIN, RGBW_MAX)
-	newGreen = rand.Intn(offset) + lowerBound
+	rand.Seed(time.Now().Unix())
+	offset, lowerBound, foundRange := toolbox.ParseRangeFromString(red, RGBW_MIN, RGBW_MAX)
+	if offset > 0 && foundRange {
+		newRed = rand.Intn(offset) + lowerBound
+	} else {
+		newRed = offset
+	}
+	offset, lowerBound, foundRange = toolbox.ParseRangeFromString(green, RGBW_MIN, RGBW_MAX)
+	if offset > 0 && foundRange {
+		newBlue = rand.Intn(offset) + lowerBound
+	} else {
+		newBlue = offset
+	}
+	offset, lowerBound, foundRange = toolbox.ParseRangeFromString(blue, RGBW_MIN, RGBW_MAX)
+	if offset > 0 && foundRange {
+		newGreen = rand.Intn(offset) + lowerBound
+	} else {
+		newGreen = offset
+	}
 	return
 }
 
