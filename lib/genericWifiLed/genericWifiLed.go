@@ -5,6 +5,7 @@ import (
 	"net"
 	"strconv"
 	"strings"
+	"time"
 )
 
 const COMMANDGROUP_SETCOLOR = 0x31
@@ -18,12 +19,20 @@ const SOCKET_OFF = 0x24
 type WifiLedController struct {
 	ipAddresses []string
 	port        int
+	timeout     int
 	connection  *net.Conn
 }
 
-func NewController(_ipAddress string, portIfNotDefault string) (output WifiLedController) {
+func NewController(_ipAddress string, port string, timeout int) (output WifiLedController) {
 	output.ipAddresses = strings.Split(_ipAddress, ",")
-	output.port, _ = strconv.Atoi(portIfNotDefault)
+	output.port, _ = strconv.Atoi(port)
+	if output.port == 0 {
+		output.port = 5577
+	}
+	output.timeout = timeout
+	if output.timeout < 1 {
+		output.timeout = 1
+	}
 	return
 }
 
@@ -62,8 +71,10 @@ func addChecksum(input []byte) []byte {
 }
 
 func (w *WifiLedController) dialAndSendThenClose(payload []byte) (err error) {
+	timeout := time.Duration(w.timeout) * time.Second
 	for _, ip := range w.ipAddresses {
-		connection, err := net.Dial("tcp", ip+":"+strconv.Itoa(w.port))
+		fmt.Printf("  LED => %s ", ip)
+		connection, err := net.DialTimeout("tcp", ip+":"+strconv.Itoa(w.port), timeout)
 		if err != nil {
 			fmt.Println(err)
 			return err
@@ -78,6 +89,7 @@ func (w *WifiLedController) dialAndSendThenClose(payload []byte) (err error) {
 		if err != nil {
 			fmt.Println(err)
 		}
+		fmt.Print("+\n")
 	}
 	return
 }

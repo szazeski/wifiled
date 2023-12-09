@@ -3,11 +3,14 @@ Command line access to generic socket based WIFI LED Controllers
 
 ## Usage
 Before using `wifiled`, you need to tell it what ip and port to target.
+(port will default to 5577 if not set)
 
 1. **Environment Variables** - Before using wifiled, run `export wifiled_ip= 192.168.1.123` and `export wifiled_port = 5577`
-2. **CLI Flags** - at the end of commands add `-ip 192.168.1.123` and/or `-port 5577`
+2. **CLI Flags** - add `-ip 192.168.1.123` and/or `-port 5577`
 
-(port will default to 5577 if not set)
+You can set multiple ips with a comma separator.  For example `-ip="1.1.1.1,2.2.2.2,3.3.3.3"`
+
+You can set `-timeout=1` to set the timeout in seconds.  This is useful if you have a lot of controllers and don't want to wait long for each command. (defaults to 5 seconds)
 
 Then you can issue the following commands:
 
@@ -20,6 +23,14 @@ Then you can issue the following commands:
 `wifiled dim 255 0 0` - dims LEDs to Red 255/255 Green 0/255 Blue 0/255
 
 `wifiled dim 200 200 200 100 100` - dims LEDs RGB to 200/255 and Whites to 100/200
+
+`wifiled randomize` - randomizes the LEDs
+
+`wifiled randomize 0-10` - sets a random color with values between 0 and 10
+
+`wifiled randomize 255 0-50 0-50` - sets red fixed and green/blue between 0 and 50
+
+If you want to avoid getting the color white, simply add `-avoidwhite` and whenever the RGB are over 150 for each channel, it will turn off the blue channel.
 
 ## To Develop
 This project expects to be checked out in your go src path.
