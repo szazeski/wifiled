@@ -21,7 +21,7 @@ checksum:
 brews:
   - name: wifiled
 
-    tap:
+    repository:
       owner: szazeski
       name: homebrew-tap
       branch: main
