@@ -18,6 +18,20 @@ builds:
 checksum:
   name_template: 'checksums.txt'
 
+archives:
+  - id: wifiled
+    name_template: >-
+      {{- .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end -}}
+
+    format_overrides:
+       - goos: windows
+         format: zip
+
 brews:
   - name: wifiled
 
@@ -25,7 +39,6 @@ brews:
       owner: szazeski
       name: homebrew-tap
       branch: main
-      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
 
     url_template: "https://github.com/szazeski/wifiled/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
 
