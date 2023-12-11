@@ -58,3 +58,14 @@ Devices:
 - ESPurna Firmware : https://github.com/xoseperez/espurna/wiki/Hardware-Magic-Home-LED-Controller
 - Magichome-python : https://github.com/adamkempenich/magichome-python
 - node-magichome : https://github.com/jangxx/node-magichome
+
+## Installation
+
+Mac Homebrew:
+`brew install szazeski/tap/wifiled`
+
+On linux/mac you can :
+`wget https://github.com/szazeski/wifiled/releases/download/v0.4.0/wifiled_$(uname -s)_$(uname -m).tar.gz -O wifiled.tar.gz && tar -xf wifiled.tar.gz && cd wifiled && chmod +x wifiled && sudo cp wifiled /usr/bin/`
+
+On Windows powershell you can :
+`Invoke-WebRequest https://github.com/szazeski/wifiled/releases/download/v0.4.0/wifiled_Windows_x86_64.zip -outfile wifiled.zip; Expand-Archive wifiled.zip; dir wifiled; echo "if you want, Move-Item ./wifiled/wifiled.exe to a PATH directory like C:\WINDOWS folder"` 

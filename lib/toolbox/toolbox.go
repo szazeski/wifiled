@@ -21,7 +21,6 @@ func ConvertStringToBoundedInt(input string, max int, min int, defaultValue int)
 
 func ParseRangeFromString(commandLineArgument string, min int, max int) (offset int, lowerBound int, foundRange bool) {
 	rgbRange := strings.Split(commandLineArgument, "-")
-	offset = 255
 	if len(rgbRange) == 2 {
 		upperBound := ConvertStringToBoundedInt(rgbRange[1], max, min, max)
 		lowerBound = ConvertStringToBoundedInt(rgbRange[0], max, min, min)

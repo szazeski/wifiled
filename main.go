@@ -5,7 +5,6 @@ import (
 	"math/rand"
 	"os"
 	"strings"
-	"time"
 	"wifiled/lib/genericWifiLed"
 	"wifiled/lib/toolbox"
 )
@@ -69,7 +68,7 @@ func main() {
 		if commandFlagIp != "" {
 			ip = commandFlagIp
 		} else {
-			fmt.Printf("Missing IP - add environment with export %s=x.x.x.x or use -ip=x.x.x.x\n", KEY_ENV_PREFIX+KEY_IP)
+			fmt.Printf("Missing IP - add environment with export %s=x.x.x.x or use -ip=\"x.x.x.x\"\n", KEY_ENV_PREFIX+KEY_IP)
 			return
 		}
 	}
@@ -140,7 +139,6 @@ func randomizeRGBSingle(input string) (int, int, int) {
 }
 
 func randomizeRGB(red string, green string, blue string) (newRed int, newBlue int, newGreen int) {
-	rand.Seed(time.Now().Unix())
 	offset, lowerBound, foundRange := toolbox.ParseRangeFromString(red, RGBW_MIN, RGBW_MAX)
 	if offset > 0 && foundRange {
 		newRed = rand.Intn(offset) + lowerBound
@@ -190,7 +188,7 @@ func displayHelpText(errorText string) {
 	}
 	fmt.Printf("wifiled v%s (%s)", VERSION, BUILD_DATE)
 	fmt.Println(" sends commands to generic wifi led controllers on the network")
-	fmt.Println("  wifiled -ip=1.2.3.4,5.6.7.8 -port=5577 -timeout=1 -avoidwhite off")
+	fmt.Println("  wifiled -ip=\"1.2.3.4,5.6.7.8\" -port=5577 -timeout=1 -avoidwhite off")
 	fmt.Println("  wifiled on -- send on command")
 	fmt.Println("  wifiled off -- send off command")
 	fmt.Println("  wifiled dim <BRIGHTNESS> -- set all channels to value out of 255")
