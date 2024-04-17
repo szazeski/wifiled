@@ -9,8 +9,8 @@ import (
 	"wifiled/lib/toolbox"
 )
 
-const VERSION = "0.4"
-const BUILD_DATE = "2023-Dec-8"
+const VERSION = "0.4.1"
+const BUILD_DATE = "2024-Apr-16"
 
 const KEY_ENV_PREFIX = "wifiled_"
 const KEY_IP = "ip"
@@ -49,9 +49,12 @@ func main() {
 				avoidWhite = true
 			}
 			continue
+		} else {
+			if commandIndex == 0 {
+				commandIndex = i
+			}
 		}
 		commandLineArgumentsLength++
-		commandIndex = i
 	}
 	command := ""
 	if commandIndex > 0 {
@@ -60,7 +63,7 @@ func main() {
 
 	if command == "" {
 		displayHelpText("")
-		return
+		os.Exit(1)
 	}
 
 	ip := env(KEY_IP)
@@ -84,6 +87,7 @@ func main() {
 
 	timeoutInt := toolbox.ConvertStringToBoundedInt(timeout, 60, 1, 5)
 	controller := genericWifiLed.NewController(ip, port, timeoutInt)
+
 	if command == "on" {
 		controller.On()
 
@@ -108,6 +112,7 @@ func main() {
 			controller.DimTo(redValue, greenValue, blueValue, warmWhiteValue, coolWhiteValue)
 		} else {
 			displayHelpText("invalid dim parameters")
+			os.Exit(1)
 		}
 	} else if command == "randomize" {
 		// wifiled randomize
@@ -131,6 +136,7 @@ func main() {
 
 	} else {
 		displayHelpText("unknown command")
+		os.Exit(1)
 	}
 }
 
