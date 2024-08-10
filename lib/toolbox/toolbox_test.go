@@ -2,6 +2,7 @@ package toolbox
 
 import (
 	"math/rand"
+	"strconv"
 	"testing"
 )
 
@@ -59,4 +60,38 @@ func Test_toolbox_ParseRangeFromString_to_RandomizeRgb(t *testing.T) {
 			t.Error("out of expected range 20-50 but got", actual)
 		}
 	}
+}
+
+func rgbToHex(r, g, b int) string {
+	return strconv.FormatInt(int64(r), 16) + strconv.FormatInt(int64(g), 16) + strconv.FormatInt(int64(b), 16)
+}
+
+func Test_toolbox_ParseHexColor(t *testing.T) {
+	expectedRed := 18
+	expectedGreen := 52
+	expectedBlue := 86
+	actualRed, actualGreen, actualBlue, err := ParseHexColor(rgbToHex(expectedRed, expectedGreen, expectedBlue))
+	if err != nil {
+		t.Error("unexpected error", err)
+	}
+	if actualRed != expectedRed {
+		t.Error("expected to get", expectedRed, "but got", actualRed)
+	}
+	if actualGreen != expectedGreen {
+		t.Error("expected to get", expectedGreen, "but got", actualGreen)
+	}
+	if actualBlue != expectedBlue {
+		t.Error("expected to get", expectedBlue, "but got", actualBlue)
+	}
+}
+
+func Test_toolbox_ParseHexColor_InvalidInput(t *testing.T) {
+	r, g, b, err := ParseHexColor("invalid")
+	if err == nil {
+		t.Error("expected error but got nil")
+	}
+	if r != 0 || g != 0 || b != 0 {
+		t.Error("expected to get 0 for all rgb values but got", r, g, b)
+	}
+
 }
