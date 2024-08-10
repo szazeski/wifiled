@@ -1,6 +1,7 @@
 package toolbox
 
 import (
+	"errors"
 	"strconv"
 	"strings"
 )
@@ -35,6 +36,9 @@ func ParseRangeFromString(commandLineArgument string, min int, max int) (offset 
 
 func ParseHexColor(s string) (int, int, int, error) {
 	s = strings.TrimPrefix(s, "#")
+	if len(s) != 6 {
+		return 0, 0, 0, errors.New("invalid hex color")
+	}
 	red, err := strconv.ParseInt(s[0:2], 16, 32)
 	if err != nil {
 		return 0, 0, 0, err
