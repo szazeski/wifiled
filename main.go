@@ -10,7 +10,7 @@ import (
 	"wifiled/lib/toolbox"
 )
 
-const VERSION = "0.5.0"
+const VERSION = "0.5.1"
 const BUILD_DATE = "2024-Aug-10"
 
 const KEY_ENV_PREFIX = "wifiled_"

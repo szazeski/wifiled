@@ -16,7 +16,7 @@ RUN go build -o /wifiled
 FROM alpine:3
 LABEL maintainer="steve@wifiled.org"
 LABEL build_date="2024-08-10"
-LABEL built_version="0.5.0"
+LABEL built_version="0.5.1"
 
 WORKDIR /
 COPY --from=builder /wifiled /wifiled
