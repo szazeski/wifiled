@@ -15,6 +15,7 @@ const SOCKET_TRUE = 0xF0
 const SOCKET_FALSE = 0x0F
 const SOCKET_ON = 0x23
 const SOCKET_OFF = 0x24
+const MAX_RGB = 255
 
 type WifiLedController struct {
 	ipAddresses []string
@@ -57,8 +58,15 @@ func generateOffCommand() []byte {
 	return addChecksum(payload)
 }
 func generateDimCommand(red int, green int, blue int, warmWhite int, coolWhite int) []byte {
-	payload := []byte{COMMANDGROUP_SETCOLOR, byte(red), byte(green), byte(blue), byte(warmWhite), byte(coolWhite), SOCKET_TRUE, SOCKET_FALSE}
+	payload := []byte{COMMANDGROUP_SETCOLOR, safeByte(red), safeByte(green), safeByte(blue), safeByte(warmWhite), safeByte(coolWhite), SOCKET_TRUE, SOCKET_FALSE}
 	return addChecksum(payload)
+}
+
+func safeByte(input int) byte {
+	if input >= 0 && input <= MAX_RGB {
+		return byte(input)
+	}
+	return byte(MAX_RGB)
 }
 
 func addChecksum(input []byte) []byte {
