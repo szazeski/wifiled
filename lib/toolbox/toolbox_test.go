@@ -56,7 +56,7 @@ func Test_toolbox_ParseRangeFromString_to_RandomizeRgb(t *testing.T) {
 		offset, lowerBound, _ := ParseRangeFromString("20-50", 0, 255)
 		actual := rand.Intn(offset) + lowerBound
 
-		if actual < 20 && actual > 50 {
+		if actual < 20 || actual > 50 {
 			t.Error("out of expected range 20-50 but got", actual)
 		}
 	}
