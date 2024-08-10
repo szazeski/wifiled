@@ -4,13 +4,14 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"strconv"
 	"strings"
 	"wifiled/lib/genericWifiLed"
 	"wifiled/lib/toolbox"
 )
 
-const VERSION = "0.4.1"
-const BUILD_DATE = "2024-Apr-16"
+const VERSION = "0.5.0"
+const BUILD_DATE = "2024-Aug-10"
 
 const KEY_ENV_PREFIX = "wifiled_"
 const KEY_IP = "ip"
@@ -49,10 +50,8 @@ func main() {
 				avoidWhite = true
 			}
 			continue
-		} else {
-			if commandIndex == 0 {
-				commandIndex = i
-			}
+		} else if commandIndex == 0 {
+			commandIndex = i
 		}
 		commandLineArgumentsLength++
 	}
@@ -98,18 +97,33 @@ func main() {
 		// wifiled dim R   G   B   WW  CW
 		// wifiled dim 255 255 255 255 255
 		// 0       1   2   3   4   5   6
+
 		if commandLineArgumentsLength == 3 {
 			// wifiled dim 10
+			// wifiled dim FF0000
+
 			v := StringToInt(commandLineArguments[2])
-			controller.DimTo(v, v, v, v, v)
+			if strconv.Itoa(v) == commandLineArguments[2] {
+				controller.DimTo(v, v, v, v, v)
+			} else {
+				r, g, b, err := toolbox.ParseHexColor(commandLineArguments[2])
+				if err == nil {
+					controller.DimTo(r, g, b, 0, 0)
+				} else {
+					displayHelpText("unable to parse dim value (not a number or hex)")
+				}
+			}
+
 		} else if commandLineArgumentsLength == 5 {
 			// wifiled dim 255 0 200
 			redValue, greenValue, blueValue := getRgbFrom(commandLineArguments)
 			controller.DimTo(redValue, greenValue, blueValue, 0, 0)
+
 		} else if commandLineArgumentsLength >= 7 {
 			// wifiled dim 10 20 30 40 50
 			redValue, greenValue, blueValue, warmWhiteValue, coolWhiteValue := getRgbwwFrom(commandLineArguments)
 			controller.DimTo(redValue, greenValue, blueValue, warmWhiteValue, coolWhiteValue)
+
 		} else {
 			displayHelpText("invalid dim parameters")
 			os.Exit(1)
@@ -198,6 +212,7 @@ func displayHelpText(errorText string) {
 	fmt.Println("  wifiled on -- send on command")
 	fmt.Println("  wifiled off -- send off command")
 	fmt.Println("  wifiled dim <BRIGHTNESS> -- set all channels to value out of 255")
+	fmt.Println("  wifiled dim <HEX> -- set channels to rgb 000000 to FFFFFF")
 	fmt.Println("  wifiled dim <RED> <GREEN> <BLUE> -- set RGB values out of 255")
 	fmt.Println("  wifiled dim <RED> <GREEN> <BLUE> <WARMWHITE> <COOLWHITE> -- set RGBW values out of 255")
 	fmt.Println("  wifiled randomize -avoidwhite -- sets a random color")

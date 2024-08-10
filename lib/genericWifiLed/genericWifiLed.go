@@ -64,7 +64,7 @@ func generateDimCommand(red int, green int, blue int, warmWhite int, coolWhite i
 func addChecksum(input []byte) []byte {
 	checksum := byte(0)
 	for i := range input {
-		checksum = checksum + input[i]
+		checksum += input[i]
 	}
 	return append(input, checksum)
 }

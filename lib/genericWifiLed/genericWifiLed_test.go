@@ -7,20 +7,21 @@ import (
 
 const TEST_UNIT_IP = "192.168.1.120" // set this to your local device to test against
 const TEST_UNIT_PORT = "5577"
+const TEST_TIMEOUT = 5
 
 func Test_genericWifiLed_DimTo_offB(t *testing.T) {
-	wifiController := NewController(TEST_UNIT_IP, TEST_UNIT_PORT, 0)
+	wifiController := NewController(TEST_UNIT_IP, TEST_UNIT_PORT, TEST_TIMEOUT)
 	wifiController.DimTo(0, 0, 0, 0, 0)
 	t.Log("The rgb strip should now be off")
 }
 
 func Test_genericWifiLed_DimTo_fullRGB(t *testing.T) {
-	wifiController := NewController(TEST_UNIT_IP, TEST_UNIT_PORT, 0)
+	wifiController := NewController(TEST_UNIT_IP, TEST_UNIT_PORT, TEST_TIMEOUT)
 	wifiController.DimTo(255, 255, 255, 0, 0)
 }
 
 func Test_genericWifiLed_DimTo_AboveRangeRed(t *testing.T) {
-	wifiController := NewController(TEST_UNIT_IP, TEST_UNIT_PORT, 0)
+	wifiController := NewController(TEST_UNIT_IP, TEST_UNIT_PORT, TEST_TIMEOUT)
 	wifiController.DimTo(600, 0, 0, 0, 0)
 }
 
