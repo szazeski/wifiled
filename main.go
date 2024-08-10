@@ -50,10 +50,8 @@ func main() {
 				avoidWhite = true
 			}
 			continue
-		} else {
-			if commandIndex == 0 {
-				commandIndex = i
-			}
+		} else if commandIndex == 0 {
+			commandIndex = i
 		}
 		commandLineArgumentsLength++
 	}

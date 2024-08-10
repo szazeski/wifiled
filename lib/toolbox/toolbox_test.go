@@ -51,7 +51,6 @@ func TryParseRangeFromString(t *testing.T, input string, expectedLowerBound int,
 }
 
 func Test_toolbox_ParseRangeFromString_to_RandomizeRgb(t *testing.T) {
-
 	for i := 0; i < 100; i++ {
 		offset, lowerBound, _ := ParseRangeFromString("20-50", 0, 255)
 		actual := rand.Intn(offset) + lowerBound
@@ -93,5 +92,4 @@ func Test_toolbox_ParseHexColor_InvalidInput(t *testing.T) {
 	if r != 0 || g != 0 || b != 0 {
 		t.Error("expected to get 0 for all rgb values but got", r, g, b)
 	}
-
 }

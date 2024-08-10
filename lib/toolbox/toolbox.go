@@ -34,9 +34,7 @@ func ParseRangeFromString(commandLineArgument string, min int, max int) (offset 
 }
 
 func ParseHexColor(s string) (int, int, int, error) {
-	if strings.HasPrefix(s, "#") {
-		s = s[1:]
-	}
+	s = strings.TrimPrefix(s, "#")
 	red, err := strconv.ParseInt(s[0:2], 16, 32)
 	if err != nil {
 		return 0, 0, 0, err
