@@ -38,7 +38,7 @@ func TryParseRangeFromString(t *testing.T, input string, expectedLowerBound int,
 	actualOffset, actualLowerBound, actualFound := ParseRangeFromString(input, 0, 255)
 
 	if actualOffset != expectedOffset {
-		t.Errorf("'%s' expected Offest to get %d but got %d", input, expectedOffset, actualOffset)
+		t.Errorf("'%s' expected Offset to get %d but got %d", input, expectedOffset, actualOffset)
 	}
 	if actualLowerBound != expectedLowerBound {
 		t.Errorf("'%s' expected LowerBound to get %d but got %d", input, expectedLowerBound, actualLowerBound)

@@ -20,7 +20,6 @@ type WifiLedController struct {
 	ipAddresses []string
 	port        int
 	timeout     int
-	connection  *net.Conn
 }
 
 func NewController(_ipAddress string, port string, timeout int) (output WifiLedController) {

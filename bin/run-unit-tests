@@ -1,0 +1,4 @@
+#!/bin/bash
+
+echo "Running unit tests and coverage..."
+go test ./... -coverprofile=coverage.out
